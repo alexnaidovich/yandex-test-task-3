@@ -14,9 +14,41 @@ Game.prototype = {
     AIResponseField: document.querySelector('#AIanswer'),
     AIResponse: "", //AIResponseField.InnerText,
     //gameData: [], //require gamedata
-    map: document.querySelectorAll('.map')[0],
+    map: function () {
+        var gameMap, locate;
+        
+        ymaps.ready(function () {
+            gameMap = new ymaps.Map ("map", {
+                center: [53.889102, 27.506835],
+                zoom: 6
+            });
+            
+            var val = "Минск";
+            
+            Game.prototype.submit.addEventListener('click', function () {
+                var val = Game.prototype.AIResponseField.innerText;
+                if (val !== undefined && val !== "") {
+                    locate = ymaps.geocode (val);
+                    locate.then(
+                        function (res) {
+                            //alert('Координаты объекта :' + res.geoObjects.get(0).geometry.getCoordinates());
+                           var coords = res.geoObjects.get(0).geometry.getCoordinates();
+                            console.log(coords);
+                            gameMap.setCenter(coords, 10);
+
+                        },
+                        function (err) {
+                            alert('Не могу найти этот город на карте :-(');
+                        }
+                    );
+                }
+            });
+        });
+    },
+    
     init: function() {
         this.startGame();
+        this.map();
     },
     
     startGame: function(){
