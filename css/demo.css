@@ -1,0 +1,26 @@
+#AIanswer {
+    width: 169px;
+    height: 15px;
+    padding: 2px;
+    border: 1px solid #999;
+    border-radius: 2px;
+    background-color: #eee;
+}
+
+.map {
+    width: 90%;
+    height: 300px;
+    margin: 10px auto;
+}
+
+button {
+    height: 21px;
+    padding: 2px 6px;
+    border: 1px solid #aaa;
+    border-radius: 2px;
+    box-sizing: border-box;
+}
+
+button img {
+    max-height: 100%;
+}
