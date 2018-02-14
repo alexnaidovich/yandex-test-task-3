@@ -1,11 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
+    <link rel="stylesheet" href="css/demo.css">
+    <script src="https://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+    <script type="text/javascript">
+        ymaps.ready(function() {
+           //alert('success!') 
+        });
+    </script>
 </head>
 <body>
-    
+    <!-- begin wrapper -->
+    <div class="wrapper">
+    	
+    	<!-- begin header -->
+    	<header id="top">
+    		<h1>ГОРОДА</h1>
+    	</header>
+    	<!-- end header -->
+    	
+    	<!-- begin main -->
+    	<main>
+    		
+    		<div id="game">
+                <!-- begin controls -->
+    		    <div class="controls">
+    		        
+    		        <button type="button" name="start">НАЧАТЬ</button>
+    		        
+    		        <form action="">
+    		            
+    		            <label>Введите город... <input type="text"><button type="submit">да</button><button id="startSpeech"><img src="img/voice.png" alt="voice input"></button></label>
+    		            
+    		            <!-- begin AIanswer -->
+    		            <div id="AIanswer">
+    		                
+    		            </div>
+    		            <!-- end AIanswer -->
+    		            
+    		            
+    		            
+    		        </form>
+    		        
+    		    </div>
+    		    <!-- end controls -->
+    		    
+    		    <!-- begin map -->
+    		    <div class="map" id="map"></div>   		                
+    		    <!-- end map -->
+            </div>
+    		
+    	</main>
+    	<!-- end main -->
+    	
+    </div>
+    <!-- end wrapper -->
     
     <script src="js/main.js"></script>
     
