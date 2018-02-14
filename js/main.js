@@ -14,7 +14,7 @@ Game.prototype = {
     AIResponseField: document.querySelector('#AIanswer'),
     AIResponse: "", //AIResponseField.InnerText,
     //gameData: [], //require gamedata
-    map: function () {
+    maps: function () {
         var gameMap, locate;
         
         ymaps.ready(function () {
@@ -31,7 +31,6 @@ Game.prototype = {
                     locate = ymaps.geocode (val);
                     locate.then(
                         function (res) {
-                            //alert('Координаты объекта :' + res.geoObjects.get(0).geometry.getCoordinates());
                            var coords = res.geoObjects.get(0).geometry.getCoordinates();
                             console.log(coords);
                             gameMap.setCenter(coords, 10);
@@ -48,7 +47,7 @@ Game.prototype = {
     
     init: function() {
         this.startGame();
-        this.map();
+        this.maps();
     },
     
     startGame: function(){
