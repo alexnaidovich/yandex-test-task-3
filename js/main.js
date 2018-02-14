@@ -13,6 +13,7 @@ Game.prototype = {
     AIResponseField: document.querySelector('#AIanswer'),
     AIResponse: "", //AIResponseField.InnerText,
     //gameData: [], //require gamedata
+    testGameData: [],
     maps: function () {
         var gameMap, locate;
         
@@ -45,9 +46,52 @@ Game.prototype = {
     },
     
     init: function() {
+        this.fillGameData();
         this.startGame();
         this.maps();
     },
+    
+    fillGameData: function () {
+        var dataCities;
+        var gameData = Game.prototype.testGameData;
+        
+        function loadText (url) {
+            if (window.XMLHttpRequest) {
+                dataCities = new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                dataCities = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            
+            if (dataCities !== undefined) {
+                dataCities.onreadystatechange = function () {
+                    loadDone();
+                }
+                dataCities.open("GET", url, true);
+                dataCities.send("");
+            } else {
+                alert("Can\'t load file")
+            }
+        }
+        
+        function loadDone () {
+            if (dataCities.readyState === 4) {
+                if (dataCities.status === 200) {
+                    console.log("Loaded:\n" + dataCities.responseText);
+                } else {
+                    alert("Error:\n" + dataCities.status + dataCities.statusText);
+                }
+            }
+        }
+        
+        for (var i = 0; i < 30, i++) {
+            gameData.push(new Array)
+        }
+        
+        for (var arr in gameData) {
+            var content = loadText('https://github.com')
+        }
+    },
+    
     
     startGame: function(){
         console.log(this.citiesChecked);
@@ -63,7 +107,9 @@ Game.prototype = {
         this.listen();
     },
     
-    listen: function() {
+    
+ // Test - no AI   
+ /*   listen: function() {
         console.log(this);
         console.log(this.citiesChecked);
         console.log(this.submit);
@@ -80,18 +126,6 @@ Game.prototype = {
             if (citiesChecked.length === 0) {
                 Game.prototype.AIResponseField.innerText = val;
                 citiesChecked.push(val);
-//                ymaps.ready(function(){
-//                    var myGeocoder = ymaps.geocode(val);
-//                    myGeocoder.then(
-//                        function (res) {
-//                            zoom: 3;
-//                            alert('Координаты объекта :' + res.geoObjects.get(0).geometry.getCoordinates());
-//                        },
-//                        function (err) {
-//                            alert('Ошибка');
-//                        }
-//                    );
-//                })
                 Game.prototype.input.value = "";
                 return true;
             } else {
@@ -111,9 +145,55 @@ Game.prototype = {
                         }
                     if (firstLetter === lastLetter) {
                             citiesChecked.push(val);
-                            ymaps.ready(function() {
-                                ymaps.geocode(val);
-                            });
+                            Game.prototype.AIResponseField.innerText = val;
+                            Game.prototype.input.value = "";
+                            return true;
+                        } else {
+                            alert("Город должен начинаться на последнюю букву предыдущего: " + Game.prototype.AIResponseField.innerText)
+                        }
+                    }
+                }
+            }
+        });
+    },
+
+*/
+
+listen: function() {
+        
+        this.submit.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log(this);
+            var val = Game.prototype.input.value;
+            var lastLetter = "",
+                lastElem = "",
+                firstLetter = val[0].toLowerCase();
+            
+            var citiesChecked = Game.prototype.citiesChecked
+            if (Game.prototype.AIResponse === "") {
+            if (citiesChecked.length === 0) {
+   //             Game.prototype.AIResponseField.innerText = val;
+                citiesChecked.push(val);
+                AITurn(val);
+                Game.prototype.input.value = "";
+                return true;
+            } else {
+                for (var cities in citiesChecked) {
+                    lastElem = citiesChecked[citiesChecked.length-1];
+                    lastLetter = lastElem[lastElem.length-1];
+                    if (lastLetter === "ъ" ||
+                        lastLetter === "ь" ||
+                        lastLetter === "ы") {
+                        lastLetter = lastElem[lastElem.length-2];
+                    }
+                    for (var c in citiesChecked) {
+                        if (citiesChecked[c] === val) {
+                            alert('Этот город уже был назван!');
+                            return false;
+                            }
+                        }
+                    if (firstLetter === lastLetter) {
+                            citiesChecked.push(val);
                             Game.prototype.AIResponseField.innerText = val;
                             Game.prototype.input.value = "";
                             return true;
@@ -127,7 +207,10 @@ Game.prototype = {
     },
 
 
-
+    AITurn: function (city) {
+        
+    },
+    
     speechInput: function(event) {
         if (!window.hasOwnProperty(webkitSpeechRecognition)) {
             alert('Ваш браузер не поддерживает голосовой ввод');
