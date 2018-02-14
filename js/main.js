@@ -83,7 +83,7 @@ Game.prototype = {
             }
         }
         
-        for (var i = 0; i < 30, i++) {
+        for (var i = 0; i < 15; i++) {
             gameData.push(new Array)
         }
         
