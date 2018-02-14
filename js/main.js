@@ -249,7 +249,7 @@ listen: function() {
     },
 
     speech: document.getElementById('startSpeech'),
-    speech.addEventListener('click', () => {
+    speechAction: speech.addEventListener('click', () => {
         speechInput(event);
     })
 
