@@ -1,4 +1,3 @@
-//alert("test");
 
 function Game(element) {
     this.el = document.querySelector(element);
@@ -126,9 +125,56 @@ Game.prototype = {
                 }
             }
         });
-    }
+    },
+
+
+
+    speechInput: function(event) {
+        if (!window.hasOwnProperty(webkitSpeechRecognition)) {
+            alert('Ваш браузер не поддерживает голосовой ввод');
+            return 0;
+        } else {
+            let input = document.querySelector('input[type="text"]');
+            let recognizing = false;
+            let recognition = new webkitSpeechRecognition();
+            recognition.lang = 'ru-RU';
+            recognition.continuous = true; // по умолчанию false - взятие одного слова
+            recognition.interimResult = true; // возвращать промежуточные результаты? (в данном случае названный город)
+
+            recognition.onerror() = (error) => {
+                console.log(event.error);
+            }
+
+            recognition.onstart() = () => {
+                recognizing = true;
+            }
+
+            recognition.onend() = () => {
+                recognizing = false;
+            }
+
+            recognition.onresult = (event) => {
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i][0] === 'стоп') {
+                        return 0;
+                    } else {
+                        input.innerHTML = event.results[i][0].transcript;
+                    }
+                }
+            }
+        }
+
+    },
+
+    speech: document.getElementById('startSpeech'),
+    speech.addEventListener('click', () => {
+        speechInput(event);
+    })
+
+
     
 }
+
 
 document.addEventListener('DOMContentLoaded', function() {
     var game = new Game("#game")
