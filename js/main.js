@@ -1,4 +1,3 @@
-
 function Game(element) {
     this.el = document.querySelector(element);
     this.init();
@@ -9,13 +8,21 @@ Game.prototype = {
     citiesChecked: [],
     playerInput: "",
     start: document.querySelector('button[name="start"]'),
+    speech: document.getElementById('sp'),
     submit: document.querySelector('button[type="submit"]'),
     AIResponseField: document.querySelector('#AIanswer'),
     AIResponse: "", //AIResponseField.InnerText,
+    currentCity: document.querySelector('#current'),
+    check: document.querySelector('#check'),
     //gameData: [], //require gamedata
     testGameData: [],
+    humanTurn: true,
+    AITurn: false,
     maps: function () {
-        var gameMap, locate;
+        var gameMap, locate, humanPlacemark, AIPlacemark;
+        
+        var humanTurn = Game.prototype.humanTurn;
+        var AITurn = Game.prototype.AITurn;
         
         ymaps.ready(function () {
             gameMap = new ymaps.Map ("map", {
@@ -25,8 +32,8 @@ Game.prototype = {
             
             var val = "Минск";
             
-            Game.prototype.submit.addEventListener('click', function () {
-                var val = Game.prototype.AIResponseField.innerText;
+            Game.prototype.check.addEventListener('change', function () {
+                val = Game.prototype.currentCity.innerText;
                 if (val !== undefined && val !== "") {
                     locate = ymaps.geocode (val);
                     locate.then(
@@ -34,9 +41,19 @@ Game.prototype = {
                            var coords = res.geoObjects.get(0).geometry.getCoordinates();
                             console.log(coords);
                             gameMap.setCenter(coords, 10);
+                            if (humanTurn) {
+                                humanPlacemark = new ymaps.Placemark(coords, {}, {
+                                    preset: 'islands#redicon'
+                                });
+                            } else if (AITurn) {
+                                AIPlacemark = new ymaps.Placemark(coords, {}, {
+                                    preset: 'islands#blueicon'
+                                });
+                            }
 
                         },
                         function (err) {
+                            throw err;
                             alert('Не могу найти этот город на карте :-(');
                         }
                     );
@@ -52,47 +69,23 @@ Game.prototype = {
     },
     
     fillGameData: function () {
-        var dataCities;
-        var gameData = Game.prototype.testGameData;
-        
-        function loadText (url) {
-            if (window.XMLHttpRequest) {
-                dataCities = new XMLHttpRequest();
-            } else if (window.ActiveXObject) {
-                dataCities = new ActiveXObject("Microsoft.XMLHTTP");
-            }
-            
-            if (dataCities !== undefined) {
-                dataCities.onreadystatechange = function () {
-                    loadDone();
-                }
-                dataCities.open("GET", url, true);
-                dataCities.send("");
-            } else {
-                alert("Can\'t load file")
+        var gameData = Game.prototype.testGameData,
+            content = "",
+            xhr = new XMLHttpRequest();
+        var url = "../data/cities.txt";
+        xhr.open("GET", url, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                content = xhr.responseText;
+                gameData = content.split(' ');
+                Game.prototype.testGameData = gameData;
+                console.log(Game.prototype.testGameData);
             }
         }
+        xhr.send();
         
-        function loadDone () {
-            if (dataCities.readyState === 4) {
-                if (dataCities.status === 200) {
-                    console.log("Loaded:\n" + dataCities.responseText);
-                } else {
-                    alert("Error:\n" + dataCities.status + dataCities.statusText);
-                }
-            }
-        }
-        
-        for (var i = 0; i < 15; i++) {
-            gameData.push(new Array)
-        }
-        
-        for (var arr in gameData) {
-            var content = loadText('https://github.com')
-        }
     },
-    
-    
+ 
     startGame: function(){
         console.log(this.citiesChecked);
         this.start.addEventListener('click', function(e) {
@@ -159,25 +152,97 @@ Game.prototype = {
 
 */
 
-listen: function() {
+    listen: function() {
         
         this.submit.addEventListener('click', function(e) {
             e.preventDefault();
             console.log(this);
-            var val = Game.prototype.input.value;
+            var val = Game.prototype.input.value,
+                answer = Game.prototype.AIResponseField;
             var lastLetter = "",
                 lastElem = "",
                 firstLetter = val[0].toLowerCase();
             
-            var citiesChecked = Game.prototype.citiesChecked
-            if (Game.prototype.AIResponse === "") {
-            if (citiesChecked.length === 0) {
-   //             Game.prototype.AIResponseField.innerText = val;
-                citiesChecked.push(val);
-                AITurn(val);
-                Game.prototype.input.value = "";
+            var citiesChecked = Game.prototype.citiesChecked;
+            var currentCity = Game.prototype.currentCity;
+            var check = Game.prototype.check;
+            var humanTurn = Game.prototype.humanTurn,
+                AITurn = Game.prototype.AITurn;
+            
+            function AITurnProcess (input) {
+                humanTurn = false;
+                AITurn = true;
+                var output = "";
+                lastLetter = val[val.length - 1];
+                if (lastLetter === "ъ" ||
+                    lastLetter === "ь" ||
+                    lastLetter === "ы") {
+                    lastLetter = val[val.length - 2];
+                }
+                console.log(lastLetter);                
+                var gameData  = Game.prototype.testGameData;
+                
+                var currentLetter = [];
+
+                for (var i = 0; i < gameData.length; i++) {
+                    if (gameData[i][0].toLowerCase() === lastLetter) {
+                        currentLetter.push(gameData[i]);
+
+                    }
+                }
+                console.log(currentLetter);
+
+                var rand = Math.floor(Math.random() * currentLetter.length);
+
+                console.log(rand);
+
+                output = currentLetter[rand];
+
+                console.log(output);
+
+                for (var cities in citiesChecked) {
+                    if (output === citiesChecked[cities]) {
+                        output = currentLetter[rand];
+
+                        console.log(output);
+                    }
+                }
+                
+                setTimeout (function() {
+                    citiesChecked.push(output);
+                    answer.innerText = output;
+                    currentCity.innerText = output;
+                    check.dispatchEvent(new Event('change'));
+                    //check.checked = false;
+
+                    Game.prototype.input.value = "";
+                    console.log(citiesChecked);
+                }, 5000);
+                
+
                 return true;
+                
+            } // end AI Turn Process
+            
+            
+            if (answer.innerText === "") {
+                
+                humanTurn = true;
+                AITurn = false;
+                
+                if (citiesChecked.length === 0) {
+                    citiesChecked.push(val);
+                    currentCity.innerText = val;
+                    check.dispatchEvent(new Event('change'));
+                    //check.checked = true;
+                    AITurnProcess(val);
+                    return true;
+                } 
             } else {
+            
+                humanTurn = true;
+                AITurn = false;
+                
                 for (var cities in citiesChecked) {
                     lastElem = citiesChecked[citiesChecked.length-1];
                     lastLetter = lastElem[lastElem.length-1];
@@ -186,30 +251,26 @@ listen: function() {
                         lastLetter === "ы") {
                         lastLetter = lastElem[lastElem.length-2];
                     }
-                    for (var c in citiesChecked) {
-                        if (citiesChecked[c] === val) {
-                            alert('Этот город уже был назван!');
-                            return false;
-                            }
+                for (var c in citiesChecked) {
+                    if (citiesChecked[c] === val) {
+                        alert('Этот город уже был назван!');
+                        return false;
                         }
-                    if (firstLetter === lastLetter) {
-                            citiesChecked.push(val);
-                            Game.prototype.AIResponseField.innerText = val;
-                            Game.prototype.input.value = "";
-                            return true;
-                        } else {
-                            alert("Город должен начинаться на последнюю букву предыдущего: " + Game.prototype.AIResponseField.innerText)
-                        }
+                    }
+                if (firstLetter === lastLetter) {
+                        citiesChecked.push(val);
+                        check.dispatchEvent(new Event('change'));
+                        //check.checked = true;
+                        AITurnProcess(val);                        
+                        return true;
+                    } else {
+                        alert("Город должен начинаться на последнюю букву предыдущего: " + Game.prototype.AIResponseField.innerText)
                     }
                 }
             }
         });
     },
 
-
-    AITurn: function (city) {
-        
-    },
     
     speechInput: function(event) {
         if (!window.hasOwnProperty(webkitSpeechRecognition)) {
@@ -248,16 +309,19 @@ listen: function() {
 
     },
 
-    speech: document.getElementById('startSpeech'),
-    speechAction: speech.addEventListener('click', () => {
-        speechInput(event);
-    })
-
+    speechAction: function () {
+        
+        this.speech.addEventListener('click', function(e) {
+            e.preventDefault();
+            Game.prototype.speechInput(e);
+        
+        });
+    }
 
     
 }
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    var game = new Game("#game")
+    var game = new Game("#game");
 });
