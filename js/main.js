@@ -231,8 +231,8 @@ Game.prototype = {
                 AITurn = false;
                 
                 if (citiesChecked.length === 0) {
-                    citiesChecked.push(val);
                     currentCity.innerText = val;
+                    citiesChecked.push(val);
                     check.dispatchEvent(new Event('change'));
                     //check.checked = true;
                     AITurnProcess(val);
@@ -259,6 +259,7 @@ Game.prototype = {
                     }
                 if (firstLetter === lastLetter) {
                         citiesChecked.push(val);
+                        currentCity.innerText = val;
                         check.dispatchEvent(new Event('change'));
                         //check.checked = true;
                         AITurnProcess(val);                        
