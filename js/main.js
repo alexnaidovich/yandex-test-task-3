@@ -18,6 +18,7 @@ Game.prototype = {
     testGameData: [],
     humanTurn: true,
     AITurn: false,
+    doesntFit: [],
     maps: function () {
         var gameMap, locate, humanPlacemark, AIPlacemark;
         
@@ -41,11 +42,11 @@ Game.prototype = {
                            var coords = res.geoObjects.get(0).geometry.getCoordinates();
                             console.log(coords);
                             gameMap.setCenter(coords, 10);
-                            if (humanTurn) {
+                            if (humanTurn === true) {
                                 humanPlacemark = new ymaps.Placemark(coords, {}, {
                                     preset: 'islands#redicon'
                                 });
-                            } else if (AITurn) {
+                            } else if (AITurn === true) {
                                 AIPlacemark = new ymaps.Placemark(coords, {}, {
                                     preset: 'islands#blueicon'
                                 });
@@ -66,7 +67,16 @@ Game.prototype = {
         this.fillGameData();
         this.startGame();
         this.maps();
+        this.speechAction();
     },
+    
+    
+    /**
+      * fillGameData() заполняет базу знаний для бота из текстового файла cities.txt,
+      * который лежит в папке data репозитория. Данный путь формирования базы был
+      * выбран по причине нехватки времени на освоение принципов работы сборщиков
+      * проекта (Gulp/WebPack), хотя это входило в ближайшие планы.
+      */
     
     fillGameData: function () {
         var gameData = Game.prototype.testGameData,
@@ -94,9 +104,13 @@ Game.prototype = {
             if (Game.prototype.citiesChecked.length !== 0) {
                 Game.prototype.citiesChecked = [];
             }
+            if (Game.prototype.doesntFit.length !== 0) {
+                Game.prototype.doesntFit = [];
+            }
             this.innerText = "РЕСТАРТ";
+            console.log(this.citiesChecked);
+            this.listen();
         });
-        console.log(this.citiesChecked);
         this.listen();
     },
     
@@ -169,6 +183,7 @@ Game.prototype = {
             var humanTurn = Game.prototype.humanTurn,
                 AITurn = Game.prototype.AITurn;
             
+            
             function AITurnProcess (input) {
                 humanTurn = false;
                 AITurn = true;
@@ -202,7 +217,16 @@ Game.prototype = {
 
                 for (var cities in citiesChecked) {
                     if (output === citiesChecked[cities]) {
-                        output = currentLetter[rand];
+                        doesntFit.push(rand);
+                        rand = Math.floor(Math.random() * currentLetter.length);
+                        for (var key in doesntFit) {
+                            if (rand.toString() !== doesntFit[key]) {
+                                output = currentLetter[rand];
+                            } else {
+                                alert("Поздравляем! Вы победили!");
+                                return false;
+                            }
+                        }
 
                         console.log(output);
                     }
@@ -217,7 +241,7 @@ Game.prototype = {
 
                     Game.prototype.input.value = "";
                     console.log(citiesChecked);
-                }, 5000);
+                }, 4000);
                 
 
                 return true;
