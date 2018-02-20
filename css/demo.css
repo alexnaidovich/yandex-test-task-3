@@ -99,3 +99,21 @@ button img {
     background-color: red;
     transition: width 3s linear;
 }
+
+@media screen and (max-width: 480px) {
+    h1 {
+        line-height: 1.2em;
+    }
+    
+    button {
+        height: 2em;
+    }
+    
+    #AIanswer, #current, #input {
+        height: 1.3em;
+    }
+    
+    #game {
+        max-height: 50vh;
+    }
+}
