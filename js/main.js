@@ -6,7 +6,6 @@ function Game(element) {
 Game.prototype = {    
     input: document.querySelector('input[type="text"]'),
     citiesChecked: [],
-    playerInput: "",
     start: document.querySelector('button[name="start"]'),
     speech: document.getElementById('sp'),
     submit: document.querySelector('button[type="submit"]'),
@@ -18,7 +17,6 @@ Game.prototype = {
     testGameData: [],
     humanTurn: true,
     AITurn: false,
-    doesntFit: [],
     maps: function () {
         var gameMap, locate, humanPlacemark, AIPlacemark;
         
@@ -83,6 +81,8 @@ Game.prototype = {
             content = "",
             xhr = new XMLHttpRequest();
         var url = "https://alexnaidovich.github.io/yandex-test-task-3/data/cities.txt";
+        // Для теста на localhost.
+        //var url = "../data/cities.txt";
         xhr.open("GET", url, true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
@@ -100,18 +100,32 @@ Game.prototype = {
         console.log(this.citiesChecked);
         this.start.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log(this);
-            if (Game.prototype.citiesChecked.length !== 0) {
-                Game.prototype.citiesChecked = [];
+            
+            if (this.innerText === "СДАТЬСЯ") {
+                this.innerText = "РЕСТАРТ";
+                alert("Вы сдались... \nНажмите \"РЕСТАРТ\", чтобы попробовать ещё раз!" + Game.prototype.mentioned(Game.prototype.citiesChecked));
+                Game.prototype.input.disabled = true;
+            } else if (this.innerText === "НАЧАТЬ" || this.innerText === "РЕСТАРТ") {
+                this.innerText = "СДАТЬСЯ";
+                
+                if (Game.prototype.input.hasAttribute("disabled") || Game.prototype.input.disabled === true) {
+                    Game.prototype.input.disabled = false;
+                }
+                
+                // При рестарте очищается массив с названными в предыдущей игре городами
+                
+                console.log(Game.prototype.citiesChecked);
+                if (Game.prototype.citiesChecked.length !== 0) {
+                    Game.prototype.citiesChecked.splice(0, Game.prototype.citiesChecked.length);
+                    console.log(Game.prototype.citiesChecked);
+                }
+                Game.prototype.currentCity.innerText = "";
+                Game.prototype.AIResponseField.innerText = "";
+                Game.prototype.humanTurn = true;
+                Game.prototype.listen();
             }
-            if (Game.prototype.doesntFit.length !== 0) {
-                Game.prototype.doesntFit = [];
-            }
-            this.innerText = "РЕСТАРТ";
-            console.log(this.citiesChecked);
-            this.listen();
+            
         });
-        this.listen();
     },
     
     
@@ -168,105 +182,43 @@ Game.prototype = {
 
     listen: function() {
         
+        var val = "",
+            answer = Game.prototype.AIResponseField;
+        
+        var citiesChecked = Game.prototype.citiesChecked;
+        var currentCity = Game.prototype.currentCity;
+        var check = Game.prototype.check;
+        var humanTurn = Game.prototype.humanTurn,
+            AITurn = Game.prototype.AITurn;
+        
         this.submit.addEventListener('click', function(e) {
             e.preventDefault();
+            e.stopImmediatePropagation();
             console.log(this);
-            var val = Game.prototype.input.value,
-                answer = Game.prototype.AIResponseField;
+            
+            humanTurn = true;
+            AITurn = false;
+            
+            val = Game.prototype.input.value;
             var lastLetter = "",
                 lastElem = "",
-                firstLetter = val[0].toLowerCase();
+                firstLetter;
             
-            var citiesChecked = Game.prototype.citiesChecked;
-            var currentCity = Game.prototype.currentCity;
-            var check = Game.prototype.check;
-            var humanTurn = Game.prototype.humanTurn,
-                AITurn = Game.prototype.AITurn;
+            if (val !== "") {
+                firstLetter = val[0].toLowerCase();                
+            }
             
-            
-            function AITurnProcess (input) {
-                humanTurn = false;
-                AITurn = true;
-                var output = "";
-                lastLetter = val[val.length - 1];
-                if (lastLetter === "ъ" ||
-                    lastLetter === "ь" ||
-                    lastLetter === "ы") {
-                    lastLetter = val[val.length - 2];
-                }
-                console.log(lastLetter);                
-                var gameData  = Game.prototype.testGameData;
-                
-                var currentLetter = [];
-
-                for (var i = 0; i < gameData.length; i++) {
-                    if (gameData[i][0].toLowerCase() === lastLetter) {
-                        currentLetter.push(gameData[i]);
-
-                    }
-                }
-                console.log(currentLetter);
-
-                var rand = Math.floor(Math.random() * currentLetter.length);
-
-                console.log(rand);
-
-                output = currentLetter[rand];
-
-                console.log(output);
-
-                for (var cities in citiesChecked) {
-                    if (output === citiesChecked[cities]) {
-                        doesntFit.push(rand);
-                        rand = Math.floor(Math.random() * currentLetter.length);
-                        for (var key in doesntFit) {
-                            if (rand.toString() !== doesntFit[key]) {
-                                output = currentLetter[rand];
-                            } else {
-                                alert("Поздравляем! Вы победили!");
-                                return false;
-                            }
-                        }
-
-                        console.log(output);
-                    }
-                }
-                
-                setTimeout (function() {
-                    citiesChecked.push(output);
-                    answer.innerText = output;
-                    currentCity.innerText = output;
-                    check.dispatchEvent(new Event('change'));
-                    //check.checked = false;
-
-                    Game.prototype.input.value = "";
-                    console.log(citiesChecked);
-                }, 4000);
-                
-
-                return true;
-                
-            } // end AI Turn Process
-            
-            
-            if (answer.innerText === "") {
-                
-                humanTurn = true;
-                AITurn = false;
+            if (currentCity.innerText === "") {
                 
                 if (citiesChecked.length === 0) {
                     currentCity.innerText = val;
                     citiesChecked.push(val);
                     check.dispatchEvent(new Event('change'));
-                    //check.checked = true;
-                    AITurnProcess(val);
-                    return true;
+                    Game.prototype.AITurnProcess(val);
+                    //return true;
                 } 
             } else {
-            
-                humanTurn = true;
-                AITurn = false;
-                
+
                 for (var cities in citiesChecked) {
                     lastElem = citiesChecked[citiesChecked.length-1];
                     lastLetter = lastElem[lastElem.length-1];
@@ -274,6 +226,7 @@ Game.prototype = {
                         lastLetter === "ь" ||
                         lastLetter === "ы") {
                         lastLetter = lastElem[lastElem.length-2];
+                        }
                     }
                 for (var c in citiesChecked) {
                     if (citiesChecked[c] === val) {
@@ -285,17 +238,120 @@ Game.prototype = {
                         citiesChecked.push(val);
                         currentCity.innerText = val;
                         check.dispatchEvent(new Event('change'));
-                        //check.checked = true;
-                        AITurnProcess(val);                        
-                        return true;
+                        Game.prototype.AITurnProcess(val);                        
+                        //return true;
                     } else {
-                        alert("Город должен начинаться на последнюю букву предыдущего: " + Game.prototype.AIResponseField.innerText)
+                        alert("Город должен начинаться на последнюю букву предыдущего: " + Game.prototype.AIResponseField.innerText);
+                        return false;
+                    }
+                }
+
+            });
+    },
+
+    AITurnProcess: function (input) {
+        
+        var citiesChecked = Game.prototype.citiesChecked;
+        var currentCity = Game.prototype.currentCity;
+        var check = Game.prototype.check;
+        var answer = Game.prototype.AIResponseField;
+        var humanTurn = Game.prototype.humanTurn,
+            AITurn = Game.prototype.AITurn;
+        
+        humanTurn = false;
+        AITurn = true;
+        var output = "";
+        var lastLetter = input[input.length - 1];
+        if (lastLetter === "ъ" ||
+            lastLetter === "ь" ||
+            lastLetter === "ы") {
+            lastLetter = input[input.length - 2];
+        }
+        console.log(lastLetter);                
+        var gameData  = Game.prototype.testGameData;
+
+        var currentLetter = [];
+
+        for (var i = 0; i < gameData.length; i++) {
+            if (gameData[i][0].toLowerCase() === lastLetter) {
+                currentLetter.push(gameData[i]);
+
+            }
+        }
+        console.log(currentLetter);
+
+        var rand = Math.floor(Math.random() * currentLetter.length);
+
+        console.log(rand);
+
+        var ch = function () {
+            for (var cities in citiesChecked) {
+                if (currentLetter.length === 0) {
+                    break;
+                } else {
+                    if (currentLetter[rand] === citiesChecked[cities]) {
+                        currentLetter.splice(rand, 1);
+                        rand = Math.floor(Math.random() * currentLetter.length);
+                        ch();                                
+                        
+                        //return true;
+                        }                        
                     }
                 }
             }
-        });
-    },
+        ch();
+        if (currentLetter.length === 0) {
+            Game.prototype.start.innerText = "РЕСТАРТ";
+            alert('Поздравляем, Вы выйграли!\nНажмите "\Рестарт"\, чтобы сыграть ещё раз.' + Game.prototype.mentioned(citiesChecked));
+            Game.prototype.input.disabled = true;
+            return false;
+        }
 
+        output = currentLetter[rand];
+        console.log(output);
+
+        if (output === undefined || output === "undefined") {
+            answer.innerText = "";
+            return false;
+        }
+
+        setTimeout (function() {
+            citiesChecked.push(output);
+            answer.innerText = output;
+            currentCity.innerText = output;
+            check.dispatchEvent(new Event('change'));
+
+            Game.prototype.input.value = "";
+            console.log(citiesChecked);
+        }, 100);
+        //return true;
+
+    },
+    
+    
+    mentioned: function (arr) {
+        var str1 = "",
+            str2 = "";
+        for (var x = 0, y = 1; x < arr.length; x += 2, y += 2) {
+            str1 += arr[x] + ", ";
+            str2 += arr[y] + ", ";
+        }
+        
+        str1 = "Города, названные Вами: " + str1;
+        str1 = str1.substring(0, str1.length - 2) + ".";
+        console.log(str1);
+        
+        str2 = "Города, названные компьютером: " + str2;
+        
+        if (arr[arr.length - 1] === "undefined" || arr[arr.length - 1] === undefined) {
+            str2 = str2.substring(0, str2.length - 11) + ".";
+        } else {
+            str2 = str2.substring(0, str2.length - 2) + ".";
+        }
+        console.log(str2);
+        
+        return "\n" + str1 + "\n" +str2;
+    },
     
     speechInput: function(event) {
         if (!window.hasOwnProperty(webkitSpeechRecognition)) {
