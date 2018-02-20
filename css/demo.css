@@ -8,6 +8,7 @@ header {
     padding: 15px;
     justify-content: space-between;
     align-items: center;
+    
 }
 
 
@@ -96,7 +97,7 @@ button {
 }
 
 button[name="start"] {
-    width: 140px;
+    width: 150px;
     height: 3.5em;
 }
 
