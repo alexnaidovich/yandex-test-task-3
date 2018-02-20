@@ -3,6 +3,13 @@
 body {
     font-family: Lato, Helvetica, sans-serif;
 }
+header {
+    display: flex;
+    padding: 15px;
+    justify-content: space-between;
+    align-items: center;
+}
+
 
 #game {
     width: 100%;
@@ -89,7 +96,7 @@ button {
 }
 
 button[name="start"] {
-    width: calc(100% - 15px);
+    width: 140px;
     height: 3.5em;
 }
 
@@ -112,6 +119,11 @@ button img {
 @media screen and (max-width: 480px) {
     h1 {
         line-height: 1.2em;
+        margin: 0;
+    }
+    
+    button[name="start"] {
+        margin: 0;
     }
     
     button {
