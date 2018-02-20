@@ -1,9 +1,18 @@
 @import url('https://fonts.googleapis.com/css?family=Lato');
 
-body {
-    font-family: Lato, Helvetica, sans-serif;
+html, body {
+    font-family: 'Lato', Helvetica, sans-serif;
+    height: 100%;
+    overflow: hidden;
 }
+
+.wrapper {
+    position: relative;
+    width: 100%;
+}
+
 header {
+    font-family: 'Lato', Helvetica, sans-serif;
     display: flex;
     padding: 15px;
     justify-content: space-between;
@@ -13,7 +22,9 @@ header {
 
 
 #game {
+    font-family: 'Lato', sans-serif;
     width: 100%;
+    height: 75vh;
     display: flex;
     flex-wrap: nowrap;
     position: relative;
@@ -64,6 +75,7 @@ p {
     margin: 3px auto;
     display: block;
     text-align: center;
+    font-family: "Lato", sans-serif;
 }
 
 #current {
@@ -81,6 +93,7 @@ p {
     margin: 0 auto;
     border: 2px solid #aaa;
     border-radius: 3px;
+    box-sizing: border-box;
 }
 
 label {
@@ -107,6 +120,7 @@ button img {
 
 #submit {
     margin-bottom: 0;
+    background-color: #ccc;
 }
 
 .loading {
@@ -115,6 +129,58 @@ button img {
     float: left;
     background-color: red;
     transition: width 3s linear;
+}
+
+
+.mobile__disclaimer {
+    display: none;
+    position: absolute;
+    padding: 20px;
+    text-align: center;
+    bottom: 75px;
+    color: #aaa;
+    border: 1px dashed #aaa;
+    width: 84%;
+    margin: 0 auto;
+}
+
+
+footer {
+    position: fixed;
+    bottom: 0;
+    height: 70px;
+    width: 100%;
+    text-align: left;
+    display: inline-flex;
+    justify-content: space-between;
+}
+
+.footer__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.footer__text p {
+    font-size: 12px;
+    text-align: left;
+    
+}
+
+.footer__icons {
+    display: inline-flex;
+    width: 30%;
+    justify-content: flex-end;
+}
+
+.fa {
+    font-size: 2em;
+    padding: 0 5px;
+    
+}
+
+.fa-github {
+    margin-right: 11px;
 }
 
 @media screen and (max-width: 480px) {
@@ -135,7 +201,11 @@ button img {
         height: 1.3em;
     }
     
-    main {
-        max-height: 50vh;
+    #game {
+        max-height: 30vh;
+    }
+    
+    .mobile__disclaimer {
+        display: block;
     }
 }

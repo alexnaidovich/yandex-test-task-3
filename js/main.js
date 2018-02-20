@@ -10,7 +10,6 @@ Game.prototype = {
     speech: document.getElementById('sp'),
     submit: document.querySelector('button[type="submit"]'),
     AIResponseField: document.querySelector('#AIanswer'),
-    AIResponse: "", //AIResponseField.InnerText,
     currentCity: document.querySelector('#current'),
     check: document.querySelector('#check'),
     //gameData: [], //require gamedata
@@ -19,7 +18,6 @@ Game.prototype = {
     AITurn: false,
     maps: function () {
         var gameMap, locate, humanPlacemark, AIPlacemark;
-        var placemarks = [];
         var humanTurn = Game.prototype.humanTurn;
         var AITurn = Game.prototype.AITurn;
         
@@ -42,12 +40,12 @@ Game.prototype = {
                             gameMap.setCenter(coords, 10);
                             if (humanTurn === true) {
                                 humanPlacemark = new ymaps.Placemark(coords, {}, {
-                                    preset: 'islands#redicon'
+                                    preset: 'islands#redIcon'
                                 });
                                 gameMap.geoObjects.add(humanPlacemark);
                             } else if (AITurn === true) {
                                 AIPlacemark = new ymaps.Placemark(coords, {}, {
-                                    preset: 'islands#blueicon'
+                                    preset: 'islands#oliveIcon'
                                 });
                                 gameMap.geoObjects.add(AIPlacemark);
                             }
@@ -108,6 +106,7 @@ Game.prototype = {
                 alert("Вы сдались... \nНажмите \"РЕСТАРТ\", чтобы попробовать ещё раз!" + Game.prototype.mentioned(Game.prototype.citiesChecked));
                 Game.prototype.input.disabled = true;
                 Game.prototype.submit.disabled = true;
+                Game.prototype.submit.style.backgroundColor = "#ccc";
                 console.log(Game.prototype.submit.disabled);
             } else if (this.innerText === "НАЧАТЬ" || this.innerText === "РЕСТАРТ") {
                 this.innerText = "СДАТЬСЯ";
@@ -117,6 +116,7 @@ Game.prototype = {
                 }
                 if (Game.prototype.submit.hasAttribute("disabled") || Game.prototype.submit.disabled === true) {
                     Game.prototype.submit.disabled = false;
+                    Game.prototype.submit.style.backgroundColor = "darkseagreen";
                 }
                 
                 // При рестарте очищается массив с названными в предыдущей игре городами
@@ -135,58 +135,6 @@ Game.prototype = {
         });
     },
     
-    
- // Test - no AI   
- /*   listen: function() {
-        console.log(this);
-        console.log(this.citiesChecked);
-        console.log(this.submit);
-        this.submit.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log(this);
-            var val = Game.prototype.input.value;
-            var lastLetter = "",
-                lastElem = "",
-                firstLetter = val[0].toLowerCase();
-            
-            var citiesChecked = Game.prototype.citiesChecked
-            if (Game.prototype.AIResponse === "") {
-            if (citiesChecked.length === 0) {
-                Game.prototype.AIResponseField.innerText = val;
-                citiesChecked.push(val);
-                Game.prototype.input.value = "";
-                return true;
-            } else {
-                for (var cities in citiesChecked) {
-                    lastElem = citiesChecked[citiesChecked.length-1];
-                    lastLetter = lastElem[lastElem.length-1];
-                    if (lastLetter === "ъ" ||
-                        lastLetter === "ь" ||
-                        lastLetter === "ы") {
-                        lastLetter = lastElem[lastElem.length-2];
-                    }
-                    for (var c in citiesChecked) {
-                        if (citiesChecked[c] === val) {
-                            alert('Этот город уже был назван!');
-                            return false;
-                            }
-                        }
-                    if (firstLetter === lastLetter) {
-                            citiesChecked.push(val);
-                            Game.prototype.AIResponseField.innerText = val;
-                            Game.prototype.input.value = "";
-                            return true;
-                        } else {
-                            alert("Город должен начинаться на последнюю букву предыдущего: " + Game.prototype.AIResponseField.innerText)
-                        }
-                    }
-                }
-            }
-        });
-    },
-
-*/
-
     listen: function() {
         
         var val = "",
@@ -274,8 +222,8 @@ Game.prototype = {
         answer.innerText = "";
         var loading = answer.appendChild(document.createElement('div'));
         loading.classList.add('loading');
-        loading.style.transition = ('width 3s linear')  ;     
-        loading.style.width = answer.offsetWidth + 'px';
+        loading.style.transition = 'width 3s linear';     
+        loading.style.width = answer.offsetWidth - 6 + 'px';
         
         
         
@@ -335,9 +283,6 @@ Game.prototype = {
             return false;
         }
         
-        //loading.style.transition = 'width 3s linear'
-        //loading.style.width = width;
-
         setTimeout (function() {
             citiesChecked.push(output);
             answer.innerText = output;
