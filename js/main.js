@@ -65,7 +65,7 @@ Game.prototype = {
         this.fillGameData();
         this.startGame();
         this.maps();
-        this.speechAction();
+        //this.speechAction();
     },
     
     
@@ -105,11 +105,16 @@ Game.prototype = {
                 this.innerText = "РЕСТАРТ";
                 alert("Вы сдались... \nНажмите \"РЕСТАРТ\", чтобы попробовать ещё раз!" + Game.prototype.mentioned(Game.prototype.citiesChecked));
                 Game.prototype.input.disabled = true;
+                Game.prototype.submit.disabled = true;
+                console.log(Game.prototype.submit.disabled);
             } else if (this.innerText === "НАЧАТЬ" || this.innerText === "РЕСТАРТ") {
                 this.innerText = "СДАТЬСЯ";
                 
                 if (Game.prototype.input.hasAttribute("disabled") || Game.prototype.input.disabled === true) {
                     Game.prototype.input.disabled = false;
+                }
+                if (Game.prototype.submit.hasAttribute("disabled") || Game.prototype.submit.disabled === true) {
+                    Game.prototype.submit.disabled = false;
                 }
                 
                 // При рестарте очищается массив с названными в предыдущей игре городами
@@ -206,6 +211,9 @@ Game.prototype = {
             
             if (val !== "") {
                 firstLetter = val[0].toLowerCase();                
+            } else {
+                alert ("Введите город или сдавайтесь!");
+                return false;
             }
             
             if (currentCity.innerText === "") {
@@ -260,6 +268,16 @@ Game.prototype = {
         
         humanTurn = false;
         AITurn = true;
+        
+        answer.innerText = "";
+        var loading = answer.appendChild(document.createElement('div'));
+        loading.classList.add('loading');
+        var width = loading.offsetWidth; 
+        loading.style.transition = 'width 0s linear'
+        loading.style.width = 0 + 'px';
+        
+        
+        
         var output = "";
         var lastLetter = input[input.length - 1];
         if (lastLetter === "ъ" ||
@@ -304,6 +322,7 @@ Game.prototype = {
             Game.prototype.start.innerText = "РЕСТАРТ";
             alert('Поздравляем, Вы выйграли!\nНажмите "\Рестарт"\, чтобы сыграть ещё раз.' + Game.prototype.mentioned(citiesChecked));
             Game.prototype.input.disabled = true;
+            Game.prototype.submit.disabled = true;
             return false;
         }
 
@@ -314,6 +333,9 @@ Game.prototype = {
             answer.innerText = "";
             return false;
         }
+        
+        loading.style.transition = 'width 3s linear'
+        loading.style.width = width;
 
         setTimeout (function() {
             citiesChecked.push(output);
@@ -323,7 +345,7 @@ Game.prototype = {
 
             Game.prototype.input.value = "";
             console.log(citiesChecked);
-        }, 100);
+        }, 3000);
         //return true;
 
     },
@@ -388,16 +410,16 @@ Game.prototype = {
             }
         }
 
-    },
-
-    speechAction: function () {
-        
-        this.speech.addEventListener('click', function(e) {
-            e.preventDefault();
-            Game.prototype.speechInput(e);
-        
-        });
     }
+
+//   speechAction: function () { 
+//       
+//        this.speech.addEventListener('click', function(e) {
+//            e.preventDefault();
+//            Game.prototype.speechInput(e);
+//        
+//        });
+//    }
 
     
 }
