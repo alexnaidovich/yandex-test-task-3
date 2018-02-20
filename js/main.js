@@ -19,7 +19,7 @@ Game.prototype = {
     AITurn: false,
     maps: function () {
         var gameMap, locate, humanPlacemark, AIPlacemark;
-        
+        var placemarks = [];
         var humanTurn = Game.prototype.humanTurn;
         var AITurn = Game.prototype.AITurn;
         
@@ -44,10 +44,12 @@ Game.prototype = {
                                 humanPlacemark = new ymaps.Placemark(coords, {}, {
                                     preset: 'islands#redicon'
                                 });
+                                gameMap.geoObjects.add(humanPlacemark);
                             } else if (AITurn === true) {
                                 AIPlacemark = new ymaps.Placemark(coords, {}, {
                                     preset: 'islands#blueicon'
                                 });
+                                gameMap.geoObjects.add(AIPlacemark);
                             }
 
                         },
@@ -272,9 +274,8 @@ Game.prototype = {
         answer.innerText = "";
         var loading = answer.appendChild(document.createElement('div'));
         loading.classList.add('loading');
-        var width = loading.offsetWidth; 
-        loading.style.transition = 'width 0s linear'
-        loading.style.width = 0 + 'px';
+        loading.style.transition = ('width 3s linear')  ;     
+        loading.style.width = answer.offsetWidth + 'px';
         
         
         
@@ -334,8 +335,8 @@ Game.prototype = {
             return false;
         }
         
-        loading.style.transition = 'width 3s linear'
-        loading.style.width = width;
+        //loading.style.transition = 'width 3s linear'
+        //loading.style.width = width;
 
         setTimeout (function() {
             citiesChecked.push(output);

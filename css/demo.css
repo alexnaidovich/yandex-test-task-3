@@ -110,7 +110,7 @@ button img {
 }
 
 .loading {
-    width: 100%;
+    width: 0%;
     height: 100%;
     float: left;
     background-color: red;
